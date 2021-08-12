@@ -1,0 +1,22 @@
+```{r}
+library(dplyr)
+library(utils)
+
+# Set Julian Date and Location
+Year <- 2021
+
+
+coalesce_by_column <- function(all_trials) {
+  return(dplyr::coalesce(!!! as.list(all_trials)))
+}
+
+all_trials <- list.files(pattern = paste0("*.csv")) %>%
+  lapply(read.csv) %>%
+  bind_rows() %>%
+  group_by(Trial, Plot_ID) %>%
+  summarise_all(coalesce_by_column)
+
+
+#Save File for Location
+write.csv(all_trials,paste0("All_Locations_",Year,".csv"),row.names = FALSE)
+```
